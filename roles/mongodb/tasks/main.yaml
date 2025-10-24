@@ -1,0 +1,33 @@
+  - name: creating repo file
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: installing mongodb
+    ansible.builtin.package:
+      name: mongodb-org 
+      state: present
+
+  - name: starting the service
+    ansible.builtin.service:
+      name: mongod
+      state: started
+      enabled: yes
+     
+  - name: allowing all
+    ansible.builtin.replace:
+      path: /etc/mongod.conf
+      regexp: '127.0.0.1'
+      replace: '0.0.0.0'
+
+  - name: starting the service
+    ansible.builtin.service:
+      name: mongod
+      state: started
+      enabled: yes
+
+    register: ec2_output
+
+  - name: printing
+    ansible.builtin.debug:
+      msg: "{{ ec2_output}}"
